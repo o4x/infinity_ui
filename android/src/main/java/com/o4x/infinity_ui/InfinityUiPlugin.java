@@ -81,11 +81,15 @@ public class InfinityUiPlugin implements FlutterPlugin, MethodCallHandler, Activ
     }
   }
 
+  public double devicePixelRatio() {
+    return activity.getBaseContext().getResources().getDisplayMetrics().density;
+  }
+
   public double getNavigationBarHeight() {
       Resources resources = activity.getBaseContext().getResources();
         int resourceId = resources.getIdentifier("navigation_bar_height", "dimen", "android");
         if (resourceId > 0) {
-            return resources.getDimensionPixelSize(resourceId);
+            return resources.getDimensionPixelSize(resourceId) / devicePixelRatio();
         }
         return 0;
   }
@@ -94,7 +98,7 @@ public class InfinityUiPlugin implements FlutterPlugin, MethodCallHandler, Activ
     Resources resources = activity.getBaseContext().getResources();
     int resourceId = resources.getIdentifier("status_bar_height", "dimen", "android");
     if (resourceId > 0) {
-        return resources.getDimensionPixelSize(resourceId);
+        return resources.getDimensionPixelSize(resourceId) / devicePixelRatio();
     }
     return 0;
   }
