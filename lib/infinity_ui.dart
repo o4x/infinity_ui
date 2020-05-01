@@ -7,24 +7,33 @@ class InfinityUi {
   static const MethodChannel _channel =
       const MethodChannel('infinity_ui');
 
+  static bool _isEnable = false;
   static double _statusBarHeight = 0;
   static double _navigationBarHeight = 0;
 
+  static bool get isEnable => _isEnable;
   static double get statusBarHeight => _statusBarHeight;
   static double get navigationBarHeight => _navigationBarHeight;
 
-  static Future<List<double>> enableInfinity(BuildContext context) async {
+  static StreamController<List<double>> _changeController = StreamController<List<double>>.broadcast();
+  static StreamSink<List<double>> get _sinkChangeController => _changeController.sink;
+  static Stream<List<double>> get changeController => _changeController.stream;
+
+  static Future<List<double>> enableInfinity() async {
     final heights = await _channel.invokeMethod('enableInfinity');
-    double ratio = MediaQuery.of(context).devicePixelRatio;
-    _statusBarHeight = heights[0] / ratio;
-    _navigationBarHeight = heights[1] / ratio;
+    _isEnable = true;
+    _statusBarHeight = heights[0];
+    _navigationBarHeight = heights[1];
+    _sinkChangeController.add([_statusBarHeight, _navigationBarHeight]);
     return [_statusBarHeight, _navigationBarHeight];
   }
 
-  static void disableInfinity() async {
+  static Future<void> disableInfinity() async {
     await _channel.invokeMethod('disableInfinity');
+    _isEnable = false;
     _statusBarHeight = 0;
     _navigationBarHeight = 0;
+    _sinkChangeController.add([0, 0]);
   }
 }
 
@@ -49,8 +58,8 @@ class SafeInfinityUi extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<double>>(
-      future: InfinityUi.enableInfinity(context),
+    return StreamBuilder<List<double>>(
+      stream: InfinityUi.changeController,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           return Stack(
