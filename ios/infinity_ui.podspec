@@ -5,9 +5,9 @@
 Pod::Spec.new do |s|
   s.name             = 'infinity_ui'
   s.version          = '0.0.1'
-  s.summary          = 'A new flutter plugin project.'
+  s.summary          = 'A flutter plugin for remove status & navigation bar padding.'
   s.description      = <<-DESC
-A new flutter plugin project.
+A flutter plugin for remove status & navigation bar padding.
                        DESC
   s.homepage         = 'http://example.com'
   s.license          = { :file => '../LICENSE' }

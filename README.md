@@ -1,6 +1,6 @@
 # infinity_ui
 
-A new flutter plugin project.
+A flutter plugin for remove status & navigation bar padding.
 
 ## Getting Started
 
