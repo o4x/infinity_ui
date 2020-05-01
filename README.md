@@ -1,5 +1,11 @@
 # infinity_ui
 
+![demo](images/image.jpg)
+
+
+<img src="https://forthebadge.com/images/badges/built-with-love.svg" height="28px" />&nbsp;&nbsp;
+<img src="https://img.shields.io/badge/license-MIT-green?style=for-the-badge" height="28px" />&nbsp;&nbsp;
+
 A flutter plugin for remove status & navigation bar padding.
 
 ## Getting Started

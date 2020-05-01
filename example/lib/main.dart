@@ -48,6 +48,7 @@ class _MyAppState extends State<MyApp> {
     ));
 
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       home: SafeInfinityUi(
         background: Image(
           image: InfinityUi.isEnable ? usa : iran,
