@@ -1,8 +1,8 @@
 name: infinity_ui
 description: A flutter plugin for remove status & navigation bar padding.
-version: 0.0.1
-author:
-homepage:
+version: 0.1.0
+author: Reza <8reza0@gmail.com>
+homepage: https://github.com/o4x/infinity_ui
 
 environment:
   sdk: ">=2.1.0 <3.0.0"
