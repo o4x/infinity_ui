@@ -62,7 +62,7 @@ class _MyAppState extends State<MyApp> {
               width: 300,
               padding: EdgeInsets.all(20),
               margin: EdgeInsets.only(bottom: 50),
-              color: Colors.white.withOpacity(0.5),
+              color: Colors.white.withOpacity(0.8),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -72,7 +72,8 @@ class _MyAppState extends State<MyApp> {
                     InfinityUi.isEnable ?
                     'Enjoy freedom.'
                     :
-                    'You could have enjoyed freedom before.',
+                    '''You can also enjoy freedom here.
+                    (ا سر بغل)''',
                     textScaleFactor: 2,
                   ),
                   Row(
