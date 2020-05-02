@@ -61,42 +61,32 @@ class SafeInfinityUi extends StatelessWidget {
     return StreamBuilder<List<double>>(
       stream: InfinityUi.changeController,
       builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          return Stack(
-            fit: StackFit.expand,
-            children: <Widget>[
-              background,
-              Container(
-                margin: EdgeInsets.only(bottom: snapshot.data[1], top: snapshot.data[0]),
-                width: MediaQuery.of(context).size.width,
-                height: MediaQuery.of(context).size.height,
-                child: child,
-              ),
-              Positioned(
-                top: 0,
-                left: 0,
-                right: 0,
-                height: snapshot.data[0],
-                child: Container(color: statusBarColor)
-              ),
-              Positioned(
-                bottom: 0,
-                left: 0,
-                right: 0,
-                height: snapshot.data[1],
-                child: Container(color: navigationBarColor)
-              ),
-            ],
-          );
-        }
         return Stack(
           fit: StackFit.expand,
           children: <Widget>[
             background,
             Container(
+              margin: EdgeInsets.only(
+                bottom: InfinityUi.navigationBarHeight,
+                top: InfinityUi.statusBarHeight
+              ),
               width: MediaQuery.of(context).size.width,
               height: MediaQuery.of(context).size.height,
               child: child,
+            ),
+            Positioned(
+              top: 0,
+              left: 0,
+              right: 0,
+              height: InfinityUi.statusBarHeight,
+              child: Container(color: statusBarColor)
+            ),
+            Positioned(
+              bottom: 0,
+              left: 0,
+              right: 0,
+              height: InfinityUi.navigationBarHeight,
+              child: Container(color: navigationBarColor)
             ),
           ],
         );
