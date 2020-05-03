@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:native_device_orientation/native_device_orientation.dart';
 
 class InfinityUi {
   static const MethodChannel _channel =
@@ -61,34 +62,83 @@ class SafeInfinityUi extends StatelessWidget {
     return StreamBuilder<List<double>>(
       stream: InfinityUi.changeController,
       builder: (context, snapshot) {
-        return Stack(
-          fit: StackFit.expand,
-          children: <Widget>[
-            background,
-            Container(
-              margin: EdgeInsets.only(
-                bottom: InfinityUi.navigationBarHeight,
-                top: InfinityUi.statusBarHeight
-              ),
-              width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height,
-              child: child,
-            ),
-            Positioned(
-              top: 0,
-              left: 0,
-              right: 0,
-              height: InfinityUi.statusBarHeight,
-              child: Container(color: statusBarColor)
-            ),
-            Positioned(
-              bottom: 0,
-              left: 0,
-              right: 0,
-              height: InfinityUi.navigationBarHeight,
-              child: Container(color: navigationBarColor)
-            ),
-          ],
+        return NativeDeviceOrientationReader(
+          builder: (context) {
+            EdgeInsets margin = EdgeInsets.only(
+              top: InfinityUi.statusBarHeight,
+              bottom: InfinityUi.navigationBarHeight,
+            );
+            Map<String, double> navPos = {
+              'top': null,
+              'bottom': 0,
+              'left': 0,
+              'right': 0,
+              'height': InfinityUi.navigationBarHeight,
+              'width': null,
+            };
+            switch (NativeDeviceOrientationReader.orientation(context)) {
+              case NativeDeviceOrientation.portraitDown:
+                break;
+              case NativeDeviceOrientation.landscapeRight:
+                margin = EdgeInsets.only(
+                  top: InfinityUi.statusBarHeight,
+                  left: InfinityUi.navigationBarHeight,
+                );
+                navPos = {
+                  'right': null,
+                  'left': 0,
+                  'bottom': 0,
+                  'top': 0,
+                  'height': null,
+                  'width': InfinityUi.navigationBarHeight,
+                };
+                break;
+              case NativeDeviceOrientation.landscapeLeft:
+                margin = EdgeInsets.only(
+                  top: InfinityUi.statusBarHeight,
+                  right: InfinityUi.navigationBarHeight,
+                );
+                navPos = {
+                  'left': null, 
+                  'right': 0,
+                  'bottom': 0,
+                  'top': 0,
+                  'height': null,
+                  'width': InfinityUi.navigationBarHeight,
+                };
+                break;
+              default:
+                break;
+            }
+            return Stack(
+              fit: StackFit.expand,
+              children: <Widget>[
+                background,
+                Container(
+                  margin: margin,
+                  width: MediaQuery.of(context).size.width,
+                  height: MediaQuery.of(context).size.height,
+                  child: child,
+                ),
+                Positioned(
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  height: InfinityUi.statusBarHeight,
+                  child: Container(color: statusBarColor)
+                ),
+                Positioned(
+                  top: navPos['top'],
+                  bottom: navPos['bottom'],
+                  left: navPos['left'],
+                  right: navPos['right'],
+                  width: navPos['width'],
+                  height: navPos['height'],
+                  child: Container(color: navigationBarColor)
+                ),
+              ],
+            );
+          },
         );
       },
     );
