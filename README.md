@@ -23,7 +23,7 @@ samples, guidance on mobile development, and a full API reference.
 * Add this to your pubspec.yaml
   ```
   dependencies:
-  infinity_ui: ^0.1.1
+  infinity_ui: ^0.1.2
   
   ```
 * Get the package from Pub:
@@ -53,7 +53,7 @@ void main() async {
 ...
  ```
  
- * Now for get height just using `Infinity` class.
+ * Now for get height just using `InfinityUi` class.
  ```dart
 ...
 
@@ -89,10 +89,12 @@ void main() async {
 
 ...
  ```
-<div style="text-align:center"><img src="images/android-pie-navigation-bars-christian-ghanime.png" />
-</div>
 
  * Check out the complete [Example](https://github.com/o4x/infinity_ui/tree/master/example)
+
+# Enjoy full transparent navigation bar in flutter😉
+
+![navigation](images/android-pie-navigation-bars.jpg)
 
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
