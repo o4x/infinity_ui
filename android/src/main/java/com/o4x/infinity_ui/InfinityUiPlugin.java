@@ -81,13 +81,10 @@ public class InfinityUiPlugin implements FlutterPlugin, MethodCallHandler, Activ
 
   private double getNavigationBarHeight() {
     return DevSpace.getNavigationBarSize(activity.getBaseContext()).y / devicePixelRatio();
-//      boolean hasMenuKey = ViewConfiguration.get(activity.getBaseContext()).hasPermanentMenuKey();
-//      int resourceId = activity.getResources().getIdentifier("navigation_bar_height", "dimen", "android");
-//      if (resourceId > 0 && !hasMenuKey)
-//      {
-//          return activity.getResources().getDimensionPixelSize(resourceId) / devicePixelRatio();
-//      }
-//      return 0;
+  }
+
+  private double getNavigationBarWidth() {
+    return DevSpace.getNavigationBarSize(activity.getBaseContext()).x / devicePixelRatio();
   }
 
   private double getStatusBarHeight() {
@@ -106,7 +103,7 @@ public class InfinityUiPlugin implements FlutterPlugin, MethodCallHandler, Activ
       } else {
           return Arrays.asList(0.0, 0.0);
       }
-      return Arrays.asList( getStatusBarHeight(), getNavigationBarHeight());
+      return Arrays.asList( getStatusBarHeight(), getNavigationBarHeight(), getNavigationBarWidth());
   }
 
   private int disableInfinity() {
