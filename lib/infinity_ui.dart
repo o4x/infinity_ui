@@ -11,22 +11,25 @@ class InfinityUi {
   static bool _isEnable = false;
   static double _statusBarHeight = 0;
   static double _navigationBarHeight = 0;
+  static double _navigationBarWidth = 0;
 
   static bool get isEnable => _isEnable;
   static double get statusBarHeight => _statusBarHeight;
   static double get navigationBarHeight => _navigationBarHeight;
+  static double get navigationBarWidth => _navigationBarWidth;
 
   static StreamController<List<double>> _changeController = StreamController<List<double>>.broadcast();
   static StreamSink<List<double>> get _sinkChangeController => _changeController.sink;
   static Stream<List<double>> get changeController => _changeController.stream;
 
   static Future<List<double>> enableInfinity() async {
-    final heights = await _channel.invokeMethod('enableInfinity');
+    final sizes = await _channel.invokeMethod('enableInfinity');
     _isEnable = true;
-    _statusBarHeight = heights[0];
-    _navigationBarHeight = heights[1];
-    _sinkChangeController.add([_statusBarHeight, _navigationBarHeight]);
-    return [_statusBarHeight, _navigationBarHeight];
+    _statusBarHeight = sizes[0];
+    _navigationBarHeight = sizes[1];
+    _navigationBarWidth = sizes[2];
+    _sinkChangeController.add([_statusBarHeight, _navigationBarHeight, _navigationBarWidth]);
+    return [_statusBarHeight, _navigationBarHeight, _navigationBarWidth];
   }
 
   static Future<void> disableInfinity() async {
@@ -34,7 +37,8 @@ class InfinityUi {
     _isEnable = false;
     _statusBarHeight = 0;
     _navigationBarHeight = 0;
-    _sinkChangeController.add([0, 0]);
+    _navigationBarWidth  = 0;
+    _sinkChangeController.add([0, 0, 0]);
   }
 }
 
@@ -45,7 +49,7 @@ class SafeInfinityUi extends StatelessWidget {
   final Color navigationBarColor;
   final Color statusBarColor;
 
-  const SafeInfinityUi({
+  SafeInfinityUi({
     Key key,
     @required this.background,
     this.child,
@@ -56,6 +60,8 @@ class SafeInfinityUi extends StatelessWidget {
   assert(background != null),
   super(key: key);
 
+  NativeDeviceOrientation lastOrientation;
+
 
   @override
   Widget build(BuildContext context) {
@@ -64,10 +70,18 @@ class SafeInfinityUi extends StatelessWidget {
       builder: (context, snapshot) {
         return NativeDeviceOrientationReader(
           builder: (context) {
+            if (
+              InfinityUi.isEnable &&
+              lastOrientation != null && 
+              NativeDeviceOrientationReader.orientation(context) != lastOrientation
+            ) {
+              InfinityUi.enableInfinity();
+            }
             EdgeInsets margin = EdgeInsets.only(
               top: InfinityUi.statusBarHeight,
               bottom: InfinityUi.navigationBarHeight,
             );
+            lastOrientation = NativeDeviceOrientationReader.orientation(context);
             Map<String, double> navPos = {
               'top': null,
               'bottom': 0,
@@ -77,12 +91,10 @@ class SafeInfinityUi extends StatelessWidget {
               'width': null,
             };
             switch (NativeDeviceOrientationReader.orientation(context)) {
-              case NativeDeviceOrientation.portraitDown:
-                break;
               case NativeDeviceOrientation.landscapeRight:
                 margin = EdgeInsets.only(
                   top: InfinityUi.statusBarHeight,
-                  left: InfinityUi.navigationBarHeight,
+                  left: InfinityUi.navigationBarWidth,
                 );
                 navPos = {
                   'right': null,
@@ -90,13 +102,13 @@ class SafeInfinityUi extends StatelessWidget {
                   'bottom': 0,
                   'top': 0,
                   'height': null,
-                  'width': InfinityUi.navigationBarHeight,
+                  'width': InfinityUi.navigationBarWidth,
                 };
                 break;
               case NativeDeviceOrientation.landscapeLeft:
                 margin = EdgeInsets.only(
                   top: InfinityUi.statusBarHeight,
-                  right: InfinityUi.navigationBarHeight,
+                  right: InfinityUi.navigationBarWidth,
                 );
                 navPos = {
                   'left': null, 
@@ -104,7 +116,7 @@ class SafeInfinityUi extends StatelessWidget {
                   'bottom': 0,
                   'top': 0,
                   'height': null,
-                  'width': InfinityUi.navigationBarHeight,
+                  'width': InfinityUi.navigationBarWidth,
                 };
                 break;
               default:
