@@ -130,7 +130,7 @@ class SafeInfinityUi extends StatelessWidget {
                   margin: margin,
                   width: MediaQuery.of(context).size.width,
                   height: MediaQuery.of(context).size.height,
-                  child: child,
+                  child: ClipRRect(child: child),
                 ),
                 Positioned(
                   top: 0,
