@@ -23,7 +23,7 @@ samples, guidance on mobile development, and a full API reference.
 * Add this to your pubspec.yaml
   ```
   dependencies:
-  infinity_ui: ^0.1.2
+  infinity_ui: ^0.2.0
   
   ```
 * Get the package from Pub:

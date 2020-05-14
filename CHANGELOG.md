@@ -1,3 +1,9 @@
+# 0.2.0
+
+* Remove scaffold border
+* Add navigationBarWidth on some devices size of navigation Bar in landscape and portrait mode is different.
+* Fix  wrong size.
+
 # 0.1.2
 
 Improve README.md
