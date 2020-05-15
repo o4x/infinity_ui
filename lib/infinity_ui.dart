@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -42,27 +43,29 @@ class InfinityUi {
   }
 }
 
-class SafeInfinityUi extends StatelessWidget {
+class SafeInfinityUi extends StatefulWidget {
 
-  final Widget background;
-  final Widget child;
-  final Color navigationBarColor;
-  final Color statusBarColor;
+  final Widget background, child, navigationBarBackground, statusBarBackground;
 
-  SafeInfinityUi({
+  const SafeInfinityUi({
     Key key,
     @required this.background,
-    this.child,
-    this.navigationBarColor = Colors.transparent,
-    this.statusBarColor = Colors.transparent,
+    this.child, 
+    this.navigationBarBackground,
+    this.statusBarBackground,
   })
   :
   assert(background != null),
   super(key: key);
 
+  @override
+  _SafeInfinityUiState createState() => _SafeInfinityUiState();
+}
+
+class _SafeInfinityUiState extends State<SafeInfinityUi> {
+
+
   NativeDeviceOrientation lastOrientation;
-
-
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<List<double>>(
@@ -125,19 +128,21 @@ class SafeInfinityUi extends StatelessWidget {
             return Stack(
               fit: StackFit.expand,
               children: <Widget>[
-                background,
+                widget.background,
                 Container(
                   margin: margin,
                   width: MediaQuery.of(context).size.width,
                   height: MediaQuery.of(context).size.height,
-                  child: ClipRRect(child: child),
+                  child: ClipRRect(child: widget.child),
                 ),
                 Positioned(
                   top: 0,
                   left: 0,
                   right: 0,
                   height: InfinityUi.statusBarHeight,
-                  child: Container(color: statusBarColor)
+                  child: ClipRRect(
+                    child: widget.statusBarBackground,
+                  )
                 ),
                 Positioned(
                   top: navPos['top'],
@@ -146,13 +151,40 @@ class SafeInfinityUi extends StatelessWidget {
                   right: navPos['right'],
                   width: navPos['width'],
                   height: navPos['height'],
-                  child: Container(color: navigationBarColor)
+                  child: ClipRRect(
+                    child: widget.navigationBarBackground,
+                  )
                 ),
               ],
             );
           },
         );
       },
+    );
+  }
+}
+
+class DropLayer extends StatelessWidget {
+
+  final ImageFilter filter;
+  final Widget child;
+
+  const DropLayer({
+    Key key,
+    @required this.filter, 
+    @required this.child
+  }) : assert(filter != null), assert(child != null), super(key: key);
+
+  
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: ClipRect(
+        child: BackdropFilter(
+          filter: filter,
+          child: child,
+        ),
+      ),
     );
   }
 }
