@@ -46,6 +46,7 @@ class InfinityUi {
 class SafeInfinityUi extends StatefulWidget {
 
   final Widget background, child, navigationBarBackground, statusBarBackground;
+  final bool disableStatus;
 
   const SafeInfinityUi({
     Key key,
@@ -53,6 +54,7 @@ class SafeInfinityUi extends StatefulWidget {
     this.child, 
     this.navigationBarBackground,
     this.statusBarBackground,
+    this.disableStatus = false,
   })
   :
   assert(background != null),
@@ -80,8 +82,9 @@ class _SafeInfinityUiState extends State<SafeInfinityUi> {
             ) {
               InfinityUi.enableInfinity();
             }
+            final double statusBarHeight = widget.disableStatus ? 0 : InfinityUi.statusBarHeight;
             EdgeInsets margin = EdgeInsets.only(
-              top: InfinityUi.statusBarHeight,
+              top: statusBarHeight,
               bottom: InfinityUi.navigationBarHeight,
             );
             lastOrientation = NativeDeviceOrientationReader.orientation(context);
@@ -96,7 +99,7 @@ class _SafeInfinityUiState extends State<SafeInfinityUi> {
             switch (NativeDeviceOrientationReader.orientation(context)) {
               case NativeDeviceOrientation.landscapeRight:
                 margin = EdgeInsets.only(
-                  top: InfinityUi.statusBarHeight,
+                  top: statusBarHeight,
                   left: InfinityUi.navigationBarWidth,
                 );
                 navPos = {
@@ -110,7 +113,7 @@ class _SafeInfinityUiState extends State<SafeInfinityUi> {
                 break;
               case NativeDeviceOrientation.landscapeLeft:
                 margin = EdgeInsets.only(
-                  top: InfinityUi.statusBarHeight,
+                  top: statusBarHeight,
                   right: InfinityUi.navigationBarWidth,
                 );
                 navPos = {
@@ -139,7 +142,7 @@ class _SafeInfinityUiState extends State<SafeInfinityUi> {
                   top: 0,
                   left: 0,
                   right: 0,
-                  height: InfinityUi.statusBarHeight,
+                  height: statusBarHeight,
                   child: ClipRRect(
                     child: widget.statusBarBackground,
                   )
@@ -160,31 +163,6 @@ class _SafeInfinityUiState extends State<SafeInfinityUi> {
           },
         );
       },
-    );
-  }
-}
-
-class DropLayer extends StatelessWidget {
-
-  final ImageFilter filter;
-  final Widget child;
-
-  const DropLayer({
-    Key key,
-    @required this.filter, 
-    @required this.child
-  }) : assert(filter != null), assert(child != null), super(key: key);
-
-  
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: ClipRect(
-        child: BackdropFilter(
-          filter: filter,
-          child: child,
-        ),
-      ),
     );
   }
 }

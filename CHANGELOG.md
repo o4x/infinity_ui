@@ -1,3 +1,11 @@
+# 0.2.2
+
+* Add disableStatus property
+
+# 0.2.1+1
+
+* Replace color with Widget
+
 # 0.2.0
 
 * Remove scaffold border
