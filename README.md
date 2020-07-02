@@ -23,7 +23,7 @@ samples, guidance on mobile development, and a full API reference.
 * Add this to your pubspec.yaml
   ```
   dependencies:
-  infinity_ui: ^0.2.2
+  infinity_ui: ^0.2.5
   
   ```
 * Get the package from Pub:
@@ -46,7 +46,7 @@ samples, guidance on mobile development, and a full API reference.
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await InfinityUi.enableInfinity(); // you can enable it anywhere
+  await InfinityUi.enable(); // you can enable it anywhere
   runApp(MyApp());
 }
 

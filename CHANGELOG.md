@@ -1,3 +1,11 @@
+# 0.2.5
+
+* Fix wrong status bar size in android 10
+* Fix wrong navigation bar size
+* Fix android 10 gestures
+ 
+* Change methods names to enable & disable
+
 # 0.2.2
 
 * Add disableStatus property
