@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -10,35 +9,40 @@ class InfinityUi {
       const MethodChannel('infinity_ui');
 
   static bool _isEnable = false;
-  static double _statusBarHeight = 0;
-  static double _navigationBarHeight = 0;
-  static double _navigationBarWidth = 0;
+  static double _statusBarHeight, _statusLSBarHeight, _navigationBarHeight = 0.0;
 
   static bool get isEnable => _isEnable;
-  static double get statusBarHeight => _statusBarHeight;
-  static double get navigationBarHeight => _navigationBarHeight;
-  static double get navigationBarWidth => _navigationBarWidth;
+  static double get statusBarHeight => _statusBarHeight > 0 ? _statusBarHeight : 0;
+  static double get statusLSBarHeight => _statusLSBarHeight > 0 ? _statusLSBarHeight : 0;
+  static double get navigationBarHeight => _navigationBarHeight > 0 ? _navigationBarHeight : 0;
 
+  // ignore: close_sinks
   static StreamController<List<double>> _changeController = StreamController<List<double>>.broadcast();
   static StreamSink<List<double>> get _sinkChangeController => _changeController.sink;
   static Stream<List<double>> get changeController => _changeController.stream;
 
   static Future<List<double>> enableInfinity() async {
+    if (isEnable) {
+      return [_statusBarHeight, _statusLSBarHeight, _navigationBarHeight];
+    }
     final sizes = await _channel.invokeMethod('enableInfinity');
     _isEnable = true;
     _statusBarHeight = sizes[0];
-    _navigationBarHeight = sizes[1];
-    _navigationBarWidth = sizes[2];
-    _sinkChangeController.add([_statusBarHeight, _navigationBarHeight, _navigationBarWidth]);
-    return [_statusBarHeight, _navigationBarHeight, _navigationBarWidth];
+    _statusLSBarHeight = sizes[1];
+    _navigationBarHeight = sizes[2];
+    _sinkChangeController.add([_statusBarHeight, _statusLSBarHeight, _navigationBarHeight]);
+    return [_statusBarHeight, _statusLSBarHeight, _navigationBarHeight];
   }
 
   static Future<void> disableInfinity() async {
+    if (!isEnable) {
+      return [0.0, 0.0, 0.0];
+    }
     await _channel.invokeMethod('disableInfinity');
     _isEnable = false;
     _statusBarHeight = 0;
+    _statusLSBarHeight = 0;
     _navigationBarHeight = 0;
-    _navigationBarWidth  = 0;
     _sinkChangeController.add([0, 0, 0]);
   }
 }
@@ -46,7 +50,6 @@ class InfinityUi {
 class SafeInfinityUi extends StatefulWidget {
 
   final Widget background, child, navigationBarBackground, statusBarBackground;
-  final bool disableStatus;
 
   const SafeInfinityUi({
     Key key,
@@ -54,7 +57,6 @@ class SafeInfinityUi extends StatefulWidget {
     this.child, 
     this.navigationBarBackground,
     this.statusBarBackground,
-    this.disableStatus = false,
   })
   :
   assert(background != null),
@@ -66,8 +68,6 @@ class SafeInfinityUi extends StatefulWidget {
 
 class _SafeInfinityUiState extends State<SafeInfinityUi> {
 
-
-  NativeDeviceOrientation lastOrientation;
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<List<double>>(
@@ -75,19 +75,12 @@ class _SafeInfinityUiState extends State<SafeInfinityUi> {
       builder: (context, snapshot) {
         return NativeDeviceOrientationReader(
           builder: (context) {
-            if (
-              InfinityUi.isEnable &&
-              lastOrientation != null && 
-              NativeDeviceOrientationReader.orientation(context) != lastOrientation
-            ) {
-              InfinityUi.enableInfinity();
-            }
-            final double statusBarHeight = widget.disableStatus ? 0 : InfinityUi.statusBarHeight;
+            print(InfinityUi.statusBarHeight);
+            NativeDeviceOrientation or = NativeDeviceOrientationReader.orientation(context);
             EdgeInsets margin = EdgeInsets.only(
-              top: statusBarHeight,
+              top: InfinityUi.statusBarHeight,
               bottom: InfinityUi.navigationBarHeight,
             );
-            lastOrientation = NativeDeviceOrientationReader.orientation(context);
             Map<String, double> navPos = {
               'top': null,
               'bottom': 0,
@@ -96,11 +89,12 @@ class _SafeInfinityUiState extends State<SafeInfinityUi> {
               'height': InfinityUi.navigationBarHeight,
               'width': null,
             };
-            switch (NativeDeviceOrientationReader.orientation(context)) {
+            if (InfinityUi.navigationBarHeight > 20)
+            switch (or) {
               case NativeDeviceOrientation.landscapeRight:
                 margin = EdgeInsets.only(
-                  top: statusBarHeight,
-                  left: InfinityUi.navigationBarWidth,
+                  top: InfinityUi.statusLSBarHeight,
+                  left: InfinityUi.navigationBarHeight,
                 );
                 navPos = {
                   'right': null,
@@ -108,13 +102,13 @@ class _SafeInfinityUiState extends State<SafeInfinityUi> {
                   'bottom': 0,
                   'top': 0,
                   'height': null,
-                  'width': InfinityUi.navigationBarWidth,
+                  'width': InfinityUi.navigationBarHeight,
                 };
                 break;
               case NativeDeviceOrientation.landscapeLeft:
                 margin = EdgeInsets.only(
-                  top: statusBarHeight,
-                  right: InfinityUi.navigationBarWidth,
+                  top: InfinityUi.statusLSBarHeight,
+                  right: InfinityUi.navigationBarHeight,
                 );
                 navPos = {
                   'left': null, 
@@ -122,7 +116,7 @@ class _SafeInfinityUiState extends State<SafeInfinityUi> {
                   'bottom': 0,
                   'top': 0,
                   'height': null,
-                  'width': InfinityUi.navigationBarWidth,
+                  'width': InfinityUi.navigationBarHeight,
                 };
                 break;
               default:
@@ -142,7 +136,9 @@ class _SafeInfinityUiState extends State<SafeInfinityUi> {
                   top: 0,
                   left: 0,
                   right: 0,
-                  height: statusBarHeight,
+                  height: or == NativeDeviceOrientation.landscapeLeft ||
+                          or == NativeDeviceOrientation.landscapeRight ?
+                          InfinityUi.statusLSBarHeight : InfinityUi.statusBarHeight,
                   child: ClipRRect(
                     child: widget.statusBarBackground,
                   )

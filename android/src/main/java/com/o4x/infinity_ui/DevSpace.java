@@ -1,40 +1,18 @@
 package com.o4x.infinity_ui;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Point;
+import android.graphics.Rect;
 import android.os.Build;
+import android.util.Log;
 import android.view.Display;
+import android.view.Window;
 import android.view.WindowManager;
 
 import java.lang.reflect.InvocationTargetException;
 
 class DevSpace {
-
-    static Point getNavigationBarSize(Context context) {
-        Point appUsableSize = getAppUsableScreenSize(context);
-        Point realScreenSize = getRealScreenSize(context);
-
-        // navigation bar on the side
-        if (appUsableSize.x < realScreenSize.x) {
-            return new Point(realScreenSize.x - appUsableSize.x, appUsableSize.y);
-        }
-
-        // navigation bar at the bottom
-        if (appUsableSize.y < realScreenSize.y) {
-            return new Point(appUsableSize.x, realScreenSize.y - appUsableSize.y);
-        }
-
-        // navigation bar is not present
-        return new Point();
-    }
-
-    private static Point getAppUsableScreenSize(Context context) {
-        WindowManager windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
-        Display display = windowManager.getDefaultDisplay();
-        Point size = new Point();
-        display.getSize(size);
-        return size;
-    }
 
     private static Point getRealScreenSize(Context context) {
         WindowManager windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
@@ -51,5 +29,36 @@ class DevSpace {
         }
 
         return size;
+    }
+
+    private static double devicePixelRatio(Activity activity) {
+        return activity.getBaseContext().getResources().getDisplayMetrics().density;
+    }
+
+    public static double getNavigationBarHeight(Activity activity) {
+        Rect rectangle = new Rect();
+        Window window = activity.getWindow();
+        window.getDecorView().getWindowVisibleDisplayFrame(rectangle);
+        final int height = getRealScreenSize(activity.getApplicationContext()).y;
+        final double nv = (height - rectangle.bottom) / devicePixelRatio(activity);
+        return nv;
+    }
+
+    public static double getStatusBarHeight(Activity activity) {
+        int result = 0;
+        int resourceId = activity.getResources().getIdentifier("status_bar_height", "dimen", "android");
+        if (resourceId > 0) {
+            result = activity.getResources().getDimensionPixelSize(resourceId);
+        }
+        return result / devicePixelRatio(activity);
+    }
+
+    public static double getStatusLSBarHeight(Activity activity) {
+        int result = 0;
+        int resourceId = activity.getResources().getIdentifier("status_bar_height_landscape", "dimen", "android");
+        if (resourceId > 0) {
+            result = activity.getResources().getDimensionPixelSize(resourceId);
+        }
+        return result / devicePixelRatio(activity);
     }
 }

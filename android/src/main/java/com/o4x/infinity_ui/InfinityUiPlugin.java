@@ -60,9 +60,6 @@ public class InfinityUiPlugin implements FlutterPlugin, MethodCallHandler, Activ
   @Override
   public void onMethodCall(@NonNull MethodCall call, @NonNull Result result) {
     switch (call.method) {
-      case "getNavigationBarHeight":
-        result.success(getNavigationBarHeight());
-        break;
       case "enableInfinity":
         result.success(enableInfinity());
         break;
@@ -75,35 +72,14 @@ public class InfinityUiPlugin implements FlutterPlugin, MethodCallHandler, Activ
     }
   }
 
-  private double devicePixelRatio() {
-    return activity.getBaseContext().getResources().getDisplayMetrics().density;
-  }
-
-  private double getNavigationBarHeight() {
-    return DevSpace.getNavigationBarSize(activity.getBaseContext()).y / devicePixelRatio();
-  }
-
-  private double getNavigationBarWidth() {
-    return DevSpace.getNavigationBarSize(activity.getBaseContext()).x / devicePixelRatio();
-  }
-
-  private double getStatusBarHeight() {
-    Resources resources = activity.getBaseContext().getResources();
-    int resourceId = resources.getIdentifier("status_bar_height", "dimen", "android");
-    if (resourceId > 0) {
-        return resources.getDimensionPixelSize(resourceId) / devicePixelRatio();
-    }
-    return 0;
-  }
-
   private List<Double> enableInfinity() {
       if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             Window w = activity.getWindow();
             w.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
       } else {
-          return Arrays.asList(0.0, 0.0);
+          return Arrays.asList(0.0, 0.0, 0.0);
       }
-      return Arrays.asList( getStatusBarHeight(), getNavigationBarHeight(), getNavigationBarWidth());
+      return Arrays.asList( DevSpace.getStatusBarHeight(activity), DevSpace.getStatusLSBarHeight(activity), DevSpace.getNavigationBarHeight(activity));
   }
 
   private int disableInfinity() {
