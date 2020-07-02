@@ -21,7 +21,7 @@ class InfinityUi {
   static StreamSink<List<double>> get _sinkChangeController => _changeController.sink;
   static Stream<List<double>> get changeController => _changeController.stream;
 
-  static Future<List<double>> enableInfinity() async {
+  static Future<List<double>> enable() async {
     if (isEnable) {
       return [_statusBarHeight, _statusLSBarHeight, _navigationBarHeight];
     }
@@ -34,7 +34,7 @@ class InfinityUi {
     return [_statusBarHeight, _statusLSBarHeight, _navigationBarHeight];
   }
 
-  static Future<void> disableInfinity() async {
+  static Future<void> disable() async {
     if (!isEnable) {
       return [0.0, 0.0, 0.0];
     }

@@ -4,7 +4,7 @@ import 'package:infinity_ui/infinity_ui.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await InfinityUi.enableInfinity();
+  await InfinityUi.enable();
   runApp(MyApp());
 }
 
@@ -29,10 +29,10 @@ class _MyAppState extends State<MyApp> {
 
   _switch(_) async {
     if (InfinityUi.isEnable) {
-      await InfinityUi.disableInfinity();
+      await InfinityUi.disable();
       brightness = Brightness.light;
     } else {
-      await InfinityUi.enableInfinity();
+      await InfinityUi.enable();
       brightness = Brightness.dark;
     }
     setState(() {});
