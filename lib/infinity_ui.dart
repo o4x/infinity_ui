@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -22,7 +23,7 @@ class InfinityUi {
   static Stream<List<double>> get changeController => _changeController.stream;
 
   static Future<List<double>> enable() async {
-    if (isEnable) {
+    if (isEnable || Platform.isIOS) {
       return [_statusBarHeight, _statusLSBarHeight, _navigationBarHeight];
     }
     final sizes = await _channel.invokeMethod('enableInfinity');
@@ -35,7 +36,7 @@ class InfinityUi {
   }
 
   static Future<void> disable() async {
-    if (!isEnable) {
+    if (!isEnable || Platform.isIOS) {
       return [0.0, 0.0, 0.0];
     }
     await _channel.invokeMethod('disableInfinity');
